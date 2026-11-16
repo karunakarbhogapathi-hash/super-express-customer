@@ -23,7 +23,7 @@ jobs:
 
       - name: Extract Android project
         run: |
-          unzip -q android-customer.zip -d extracted
+          unzip -q "android-customer.zip (1).zip" -d extracted
           GRADLEW=$(find extracted -type f -name gradlew | head -n 1)
           if [ -z "$GRADLEW" ]; then
             echo "Gradle wrapper not found"
