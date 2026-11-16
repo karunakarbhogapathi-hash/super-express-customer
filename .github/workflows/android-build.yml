@@ -5,7 +5,8 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'android-customer.zip'
+      - 'android-customer.zip (1).zip'
+      - '.github/workflows/android-build.yml'
 
 jobs:
   build:
@@ -31,6 +32,18 @@ jobs:
           fi
           echo "PROJECT_DIR=$(dirname "$GRADLEW")" >> $GITHUB_ENV
 
+      - name: Increase Gradle memory
+        run: |
+          touch "$PROJECT_DIR/gradle.properties"
+          sed -i '/^org.gradle.jvmargs=/d' "$PROJECT_DIR/gradle.properties"
+          sed -i '/^org.gradle.workers.max=/d' "$PROJECT_DIR/gradle.properties"
+          sed -i '/^org.gradle.parallel=/d' "$PROJECT_DIR/gradle.properties"
+          {
+            echo 'org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8'
+            echo 'org.gradle.workers.max=2'
+            echo 'org.gradle.parallel=false'
+          } >> "$PROJECT_DIR/gradle.properties"
+
       - name: Build Customer APK
         run: |
           chmod +x "$PROJECT_DIR/gradlew"
@@ -43,3 +56,4 @@ jobs:
           name: super-express-customer-apk
           path: extracted/**/app/build/outputs/apk/debug/*.apk
           
+
